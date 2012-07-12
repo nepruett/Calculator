@@ -10,44 +10,40 @@
 
 @interface CalculatorBrain()
 
-@property (nonatomic, strong) NSMutableArray *operandStack;
+@property (nonatomic, strong) NSMutableArray *programStack;
 
 @end
 
 @implementation CalculatorBrain
 
-@synthesize operandStack = _operandStack;
+@synthesize programStack = _programStack;
 
-- (NSMutableArray *)operandStack
+- (NSMutableArray *)programStack
 {
-    if (!_operandStack) {
-        _operandStack = [[NSMutableArray alloc] init];
+    if (!_programStack) {
+        _programStack = [[NSMutableArray alloc] init];
     }
-    return _operandStack;
+    return _programStack;
 }
 
 - (void)clear
 {
-    [self.operandStack removeAllObjects];
+    [self.programStack removeAllObjects];
 }
 
 - (void)pushOperand:(double)operand
 {
     NSNumber *operandObject = [NSNumber numberWithDouble:operand];
-    [self.operandStack addObject:operandObject];
-}
-
-- (double)popOperand
-{
-    NSNumber *operandObject = [self.operandStack lastObject];
-    if (operandObject) [self.operandStack removeLastObject];
-    return [operandObject doubleValue];
+    [self.programStack addObject:operandObject];
 }
 
 - (double)performOperation:(NSString *)operation
 {
-    double result = 0;
-    
+    [self.programStack addObject:operation];
+    return [CalculatorBrain runProgram:self.program];
+}
+
+/*
     if ([operation isEqualToString:@"+"]) {
         result = [self popOperand] + [self popOperand];
     } else if ([@"*" isEqualToString:operation]) {
@@ -68,9 +64,6 @@
         result = M_PI;
     }
     
-    [self pushOperand:result];
-    
-    return result;
-}
+*/
 
 @end
