@@ -26,6 +26,11 @@
     return _programStack;
 }
 
+- (id)program 
+{
+    return [self.programStack copy];
+}
+
 - (void)clear
 {
     [self.programStack removeAllObjects];
@@ -41,6 +46,26 @@
 {
     [self.programStack addObject:operation];
     return [CalculatorBrain runProgram:self.program];
+}
+
++ (NSString *)descriptionOfProgram:(id)program
+{
+    return @"Implement in Assignment #2";
+}
+
++ (double)runProgram:(id)program
+{
+    return [self popOperandOffStack:[program mutableCopy]];
+}
+
++ (double)popOperandOffStack:(NSMutableArray *)stack
+{
+    double result = 0;
+    
+    // pop operand off stack
+    // if operation, need to recursively evaluate
+    
+    return result;
 }
 
 /*
