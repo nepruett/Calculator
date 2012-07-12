@@ -67,7 +67,41 @@
     double result = 0;
     
     // pop operand off stack
-    // if operation, need to recursively evaluate
+    id topOfStack = [stack lastObject];
+    if (topOfStack) [stack removeLastObject];
+    
+    if ([topOfStack isKindOfClass:[NSNumber class]]) {
+        return [topOfStack doubleValue];
+    } 
+    else if ([topOfStack isKindOfClass:[NSString class]])
+    {
+        // if operation, need to recursively evaluate
+        NSString *operation = topOfStack;
+        if ([operation isEqualToString:@"+"]) {
+            result = [self popOperandOffStack:stack] 
+            + [self popOperandOffStack:stack];
+        } else if ([@"*" isEqualToString:operation]) {
+            result = [self popOperandOffStack:stack] 
+            * [self popOperandOffStack:stack];
+        } else if ([@"-" isEqualToString:operation]) {
+            double subtrahend = [self popOperandOffStack:stack];
+            result = [self popOperandOffStack:stack] - subtrahend;
+        } else if ([@"/" isEqualToString:operation]) {
+            double divisor = [self popOperandOffStack:stack];
+            if (divisor) {
+                result = [self popOperandOffStack:stack] 
+                            / divisor;
+            }
+        } else if ([@"sin" isEqualToString:operation]) {
+            result = sin([self popOperandOffStack:stack]);
+        } else if ([@"cos" isEqualToString:operation]) {
+            result = cos([self popOperandOffStack:stack]);
+        } else if ([@"sqrt" isEqualToString:operation]) {
+            result = sqrt([self popOperandOffStack:stack]);
+        } else if ([@"π" isEqualToString:operation]) {
+            result = M_PI;
+        }
+    }
     
     return result;
 }
