@@ -44,7 +44,7 @@
         self.display.text = digit;
         self.userIsInTheMiddleOfEnteringANumber = YES;
     }
-    self.input.text = [self.input.text stringByAppendingString:digit];
+    self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
 
 -(IBAction)clearPressed {
@@ -57,7 +57,7 @@
 - (IBAction)enterPressed {
     [self.brain pushOperand:[self.display.text doubleValue]];
     self.userIsInTheMiddleOfEnteringANumber = NO;
-    self.input.text = [self.input.text stringByAppendingString:@" "];
+    self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
 
 - (IBAction)operationPressed:(UIButton *)sender {
@@ -67,7 +67,7 @@
     NSString *operation = [sender currentTitle];
     double result = [self.brain performOperation:operation];
     self.display.text = [NSString stringWithFormat:@"%g", result];
-    self.input.text = [self.input.text stringByAppendingString:[[sender currentTitle] stringByAppendingString:@" "]];
+    self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
 
 - (void)viewDidUnload {

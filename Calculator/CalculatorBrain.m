@@ -62,6 +62,16 @@
     return [self popOperandOffStack:stack];
 }
 
++ (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableNames 
+{
+    return [self runProgram:program];
+}
+
++ (NSSet *)variablesUsedInProgram:(id)program
+{
+    return nil;
+}
+
 + (double)popOperandOffStack:(NSMutableArray *)stack
 {
     double result = 0;
