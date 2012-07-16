@@ -116,27 +116,4 @@
     return result;
 }
 
-/*
-    if ([operation isEqualToString:@"+"]) {
-        result = [self popOperand] + [self popOperand];
-    } else if ([@"*" isEqualToString:operation]) {
-        result = [self popOperand] * [self popOperand];
-    } else if ([@"-" isEqualToString:operation]) {
-        double subtrahend = [self popOperand];
-        result = [self popOperand] - subtrahend;
-    } else if ([@"/" isEqualToString:operation]) {
-        double divisor = [self popOperand];
-        if (divisor) result = [self popOperand] / divisor;
-    } else if ([@"sin" isEqualToString:operation]) {
-        result = sin([self popOperand]);
-    } else if ([@"cos" isEqualToString:operation]) {
-        result = cos([self popOperand]);
-    } else if ([@"sqrt" isEqualToString:operation]) {
-        result = sqrt([self popOperand]);
-    } else if ([@"π" isEqualToString:operation]) {
-        result = M_PI;
-    }
-    
-*/
-
 @end
