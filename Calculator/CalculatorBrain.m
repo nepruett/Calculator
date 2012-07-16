@@ -42,6 +42,11 @@
     [self.programStack addObject:operandObject];
 }
 
+- (void)pushVariable:(NSString *)variableName
+{
+    [self.programStack addObject:variableName];
+}
+
 - (double)performOperation:(NSString *)operation
 {
     [self.programStack addObject:operation];
@@ -110,6 +115,9 @@
             result = sqrt([self popOperandOffStack:stack]);
         } else if ([@"π" isEqualToString:operation]) {
             result = M_PI;
+        } else {
+            // is a variable
+            result = 0;
         }
     }
     

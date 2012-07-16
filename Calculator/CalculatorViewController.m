@@ -47,6 +47,16 @@
     self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
 
+- (IBAction)variablePressed:(UIButton *)sender {
+    if (self.userIsInTheMiddleOfEnteringANumber) {
+        [self enterPressed];
+    }
+    NSString *variableName = [sender currentTitle];
+    [self.brain pushVariable:variableName];
+    self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
+    
+}
+
 -(IBAction)clearPressed {
     [self.brain clear];
     self.userIsInTheMiddleOfEnteringANumber = NO;
