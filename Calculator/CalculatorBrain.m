@@ -55,21 +55,25 @@
 
 + (NSString *)descriptionOfProgram:(id)program
 {
-    return @"Implement in Assignment #2";
+    NSArray *stack;
+    if ([program isKindOfClass:[NSArray class]]) {
+        stack = [program copy];
+    }
+    return [self popDescriptionOffStack:stack];
 }
 
 + (double)runProgram:(id)program
+{
+    return [self runProgram:program usingVariableValues:[[NSDictionary alloc] init]];
+}
+
++ (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variables
 {
     NSMutableArray *stack;
     if ([program isKindOfClass:[NSArray class]]) {
         stack = [program mutableCopy];
     }
-    return [self popOperandOffStack:stack];
-}
-
-+ (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableNames 
-{
-    return [self runProgram:program];
+    return [self popOperandOffStack:stack usingVariableValues: variables];
 }
 
 + (NSSet *)variablesUsedInProgram:(id)program
@@ -77,7 +81,28 @@
     return nil;
 }
 
++ (NSString *)popDescriptionOffStack:(NSArray *) stack 
+{
+    NSString *result = @"";
+    
+    for (id obj in stack) {
+        NSString *objString;
+        if ([obj isKindOfClass:[NSNumber class]]) {
+            objString = [obj stringValue];
+        } 
+        else if ([obj isKindOfClass:[NSString class]])
+        {
+            objString = obj;
+        }
+        result = [result stringByAppendingString:objString];
+        result = [result stringByAppendingString:@" "];
+    }
+    
+    return result;
+}
+
 + (double)popOperandOffStack:(NSMutableArray *)stack
+         usingVariableValues:(NSDictionary*)variables
 {
     double result = 0;
     
@@ -93,31 +118,37 @@
         // if operation, need to recursively evaluate
         NSString *operation = topOfStack;
         if ([operation isEqualToString:@"+"]) {
-            result = [self popOperandOffStack:stack] 
-            + [self popOperandOffStack:stack];
+            result = [self popOperandOffStack:stack usingVariableValues:variables] 
+            + [self popOperandOffStack:stack usingVariableValues:variables];
         } else if ([@"*" isEqualToString:operation]) {
-            result = [self popOperandOffStack:stack] 
-            * [self popOperandOffStack:stack];
+            result = [self popOperandOffStack:stack usingVariableValues:variables] 
+            * [self popOperandOffStack:stack usingVariableValues:variables];
         } else if ([@"-" isEqualToString:operation]) {
-            double subtrahend = [self popOperandOffStack:stack];
-            result = [self popOperandOffStack:stack] - subtrahend;
+            double subtrahend = [self popOperandOffStack:stack usingVariableValues:variables];
+            result = [self popOperandOffStack:stack usingVariableValues:variables] - subtrahend;
         } else if ([@"/" isEqualToString:operation]) {
-            double divisor = [self popOperandOffStack:stack];
+            double divisor = [self popOperandOffStack:stack usingVariableValues:variables];
             if (divisor) {
-                result = [self popOperandOffStack:stack] 
+                result = [self popOperandOffStack:stack usingVariableValues:variables] 
                             / divisor;
             }
         } else if ([@"sin" isEqualToString:operation]) {
-            result = sin([self popOperandOffStack:stack]);
+            result = sin([self popOperandOffStack:stack usingVariableValues:variables]);
         } else if ([@"cos" isEqualToString:operation]) {
-            result = cos([self popOperandOffStack:stack]);
+            result = cos([self popOperandOffStack:stack usingVariableValues:variables]);
         } else if ([@"sqrt" isEqualToString:operation]) {
-            result = sqrt([self popOperandOffStack:stack]);
+            result = sqrt([self popOperandOffStack:stack usingVariableValues:variables]);
         } else if ([@"π" isEqualToString:operation]) {
             result = M_PI;
         } else {
             // is a variable
+            NSString *varName = operation;
             result = 0;
+            if ([[variables allKeys] containsObject:varName]) {
+                NSNumber *varValue = (NSNumber *)[variables objectForKey:varName];
+                result = [varValue floatValue];
+            }
+            
         }
     }
     
