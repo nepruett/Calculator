@@ -78,7 +78,31 @@
 
 + (NSSet *)variablesUsedInProgram:(id)program
 {
-    return nil;
+    NSArray *stack;
+    if ([program isKindOfClass:[NSArray class]]) {
+        stack = [program copy];
+    }
+    NSMutableSet *varNames = [NSMutableSet set];
+    
+    for (id obj in stack) {
+        if ([obj isKindOfClass:[NSString class]]) {
+            NSString *name = (NSString *)obj;
+            if (![varNames containsObject: name] && ![[self operationNames] containsObject:name]) {
+                [varNames addObject:name];
+            }
+        }
+    }
+    
+    if ([varNames count] > 0) {
+        return varNames;
+    } else {
+        return nil;
+    }
+}
+
++ (NSSet *)operationNames
+{
+    return [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"sqrt", @"π", nil];
 }
 
 + (NSString *)popDescriptionOffStack:(NSArray *) stack 
