@@ -12,6 +12,7 @@
 @interface CalculatorViewController ()
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
 @property (nonatomic, strong) CalculatorBrain *brain;
+@property (nonatomic, strong) NSDictionary *testVariableValues;
 @end
 
 @implementation CalculatorViewController
@@ -19,11 +20,18 @@
 @synthesize display;
 @synthesize userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = _brain;
+@synthesize testVariableValues = _variables;
 
 - (CalculatorBrain *)brain
 {
     if (!_brain) _brain = [[CalculatorBrain alloc] init];
     return _brain;
+}
+
+- (NSDictionary *)variables
+{
+    if (!_variables) _variables = [[NSDictionary alloc] init];
+    return _variables;
 }
 
 - (IBAction)digitPressed:(UIButton *)sender {
@@ -75,7 +83,8 @@
         [self enterPressed];
     }
     NSString *operation = [sender currentTitle];
-    double result = [self.brain performOperation:operation];
+    [self.brain performOperation:operation];
+    double result = [CalculatorBrain runProgram:self.brain.program usingVariableValues:self.testVariableValues];
     self.display.text = [NSString stringWithFormat:@"%g", result];
     self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }

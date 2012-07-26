@@ -55,11 +55,18 @@
 
 + (NSString *)descriptionOfProgram:(id)program
 {
-    NSArray *stack;
+    NSMutableArray *stack;
     if ([program isKindOfClass:[NSArray class]]) {
-        stack = [program copy];
+        stack = [program mutableCopy];
     }
-    return [self popDescriptionOffStack:stack];
+    NSString *result = [self popDescriptionOffStack:stack];
+    id next = [stack lastObject];
+    while (next) {
+        NSLog(@"there are more, so adding comma...");
+        result = [NSString stringWithFormat:@"%@, %@", result, [self popDescriptionOffStack:stack]];
+        next = [stack lastObject];
+    }
+    return result;
 }
 
 + (double)runProgram:(id)program
@@ -105,24 +112,62 @@
     return [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"sqrt", @"π", nil];
 }
 
-+ (NSString *)popDescriptionOffStack:(NSArray *) stack 
++ (NSSet *)functionOperationNames
+{
+    return [NSSet setWithObjects:@"sqrt", @"sin", @"cos", nil];
+}
+
++ (NSSet *)inlineOperationNames
+{
+    return [NSSet setWithObjects:@"+", @"-", @"*", @"/", nil];
+}
+
++ (NSSet *)highPrecedenceOperationNames 
+{
+    return [NSSet setWithObjects:@"*", @"/", nil];
+}
+
++ (NSString *)popDescriptionOffStack:(NSMutableArray *) stack 
 {
     NSString *result = @"";
+    id topOfStack = [stack lastObject];
+    if (topOfStack) [stack removeLastObject];
     
-    for (id obj in stack) {
-        NSString *objString;
-        if ([obj isKindOfClass:[NSNumber class]]) {
-            objString = [obj stringValue];
-        } 
-        else if ([obj isKindOfClass:[NSString class]])
-        {
-            objString = obj;
+    if ([topOfStack isKindOfClass:[NSNumber class]]) {
+        NSLog(@"number = %@", topOfStack);
+        result = [topOfStack stringValue];
+    } else if ([topOfStack isKindOfClass:[NSString class]]) {
+        NSString *topOfStackString = topOfStack;
+        if ([[self functionOperationNames] containsObject:topOfStackString]) {
+            NSLog(@"functionOp = %@", topOfStackString);
+            result = [NSString stringWithFormat:@"%@(%@)", topOfStackString, [self popDescriptionOffStack: stack]];
+        } else if ([[self inlineOperationNames] containsObject:topOfStackString]) {
+            NSLog(@"inlineOp = %@", topOfStackString);
+            NSString *secondArg = [self popDescriptionOffStack:stack];
+            NSString *firstArg = [self popDescriptionOffStack:stack];
+            if ([[self highPrecedenceOperationNames] containsObject:topOfStackString]) {
+                result = [NSString stringWithFormat:@"%@ %@ %@", [self putParensIfNeeded:firstArg], topOfStackString, [self putParensIfNeeded:secondArg]];
+            } else {
+                result = [NSString stringWithFormat:@"%@ %@ %@", firstArg, topOfStackString, secondArg];
+            }
+        } else {
+            NSLog(@"unaryOp = %@", topOfStackString);
+            result = topOfStackString;
         }
-        result = [result stringByAppendingString:objString];
-        result = [result stringByAppendingString:@" "];
     }
     
+    NSLog(@"finally returning - \"%@\"", result);
     return result;
+}
+
++ (NSString *)putParensIfNeeded:(NSString *)arg
+{
+    if ([arg rangeOfString:@"+"].location == NSNotFound && 
+        [arg rangeOfString:@"-"].location == NSNotFound) {
+        return arg;
+    } else {
+        return [NSString stringWithFormat:@"(%@)", arg];
+    }
 }
 
 + (double)popOperandOffStack:(NSMutableArray *)stack
