@@ -395,12 +395,20 @@
                                     <action selector="variablePressed:" destination="2" eventType="touchUpInside" id="Np2-5L-Zn8"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="NHa-gs-0gp">
+                                <rect key="frame" x="20" y="367" width="280" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
                         <outlet property="display" destination="1fF-ov-9BT" id="dZy-kJ-t7T"/>
                         <outlet property="input" destination="yyT-rs-65T" id="CB1-Lf-mgv"/>
+                        <outlet property="variableDisplay" destination="NHa-gs-0gp" id="NmZ-Oc-MmE"/>
                     </connections>
                 </viewController>
             </objects>
@@ -412,6 +420,7 @@
             <relationships>
                 <relationship kind="outlet" name="display" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="input" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="variableDisplay" candidateClass="UILabel"/>
             </relationships>
         </class>
     </classes>

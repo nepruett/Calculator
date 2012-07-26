@@ -18,6 +18,7 @@
 @implementation CalculatorViewController
 @synthesize input;
 @synthesize display;
+@synthesize variableDisplay;
 @synthesize userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = _brain;
 @synthesize testVariableValues = _variables;
@@ -52,7 +53,7 @@
         self.display.text = digit;
         self.userIsInTheMiddleOfEnteringANumber = YES;
     }
-    self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
+    [self updateDisplays];
 }
 
 - (IBAction)variablePressed:(UIButton *)sender {
@@ -61,7 +62,7 @@
     }
     NSString *variableName = [sender currentTitle];
     [self.brain pushVariable:variableName];
-    self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
+    [self updateDisplays];
     
 }
 
@@ -70,12 +71,13 @@
     self.userIsInTheMiddleOfEnteringANumber = NO;
     self.display.text = @"";
     self.input.text = @"";
+    self.variableDisplay.text = @"";
 }
 
 - (IBAction)enterPressed {
     [self.brain pushOperand:[self.display.text doubleValue]];
     self.userIsInTheMiddleOfEnteringANumber = NO;
-    self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
+    [self updateDisplays];
 }
 
 - (IBAction)operationPressed:(UIButton *)sender {
@@ -86,7 +88,24 @@
     [self.brain performOperation:operation];
     double result = [CalculatorBrain runProgram:self.brain.program usingVariableValues:self.testVariableValues];
     self.display.text = [NSString stringWithFormat:@"%g", result];
+    [self updateDisplays];
+}
+
+- (void)updateDisplays {
     self.input.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
+    NSSet *variablesUsed = [CalculatorBrain variablesUsedInProgram:self.brain.program];
+    NSString *result = @"";
+    if (variablesUsed) {
+        for (NSString *varName in variablesUsed) {
+            NSNumber *varValue = [self.testVariableValues valueForKey:varName];
+            if (varValue) {
+                result = [result stringByAppendingString:[NSString stringWithFormat:@"%@ = %@ ", varName, varValue]];
+            } else {
+                result = [result stringByAppendingString:[NSString stringWithFormat:@"%@ = 0 ", varName]];
+            }
+        }
+    }
+    self.variableDisplay.text = result;
 }
 
 - (void)viewDidUnload {
