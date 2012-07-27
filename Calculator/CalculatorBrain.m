@@ -36,6 +36,11 @@
     [self.programStack removeAllObjects];
 }
 
+- (void)undo
+{
+    [self.programStack removeLastObject];
+}
+
 - (void)pushOperand:(double)operand
 {
     NSNumber *operandObject = [NSNumber numberWithDouble:operand];

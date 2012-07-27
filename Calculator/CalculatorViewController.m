@@ -73,6 +73,24 @@
     self.input.text = @"";
     self.variableDisplay.text = @"";
 }
+- (IBAction)undoPressed 
+{
+    if (self.userIsInTheMiddleOfEnteringANumber) {
+        NSString *currentNumber = self.display.text;
+        self.display.text = [currentNumber substringToIndex:[currentNumber length] - 1];
+        if (self.display.text.length == 0) {
+            self.userIsInTheMiddleOfEnteringANumber = NO;
+        }
+    }
+    
+    if (!self.userIsInTheMiddleOfEnteringANumber){
+        // pop top off stack and redisplay
+        [self.brain undo];
+        double result = [CalculatorBrain runProgram:self.brain.program usingVariableValues:self.testVariableValues];
+        self.display.text = [NSString stringWithFormat:@"%g", result];
+        [self updateDisplays];
+    }
+}
 
 - (IBAction)enterPressed {
     [self.brain pushOperand:[self.display.text doubleValue]];
