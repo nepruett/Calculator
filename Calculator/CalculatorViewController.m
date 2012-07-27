@@ -5,7 +5,7 @@
 //  Created by Nathan Pruett on 6/30/12.
 //  Copyright (c) 2012 LMN Solutions, Inc. All rights reserved.
 //
-
+#include <stdlib.h>
 #import "CalculatorViewController.h"
 #import "CalculatorBrain.h"
 
@@ -86,6 +86,24 @@
     }
     NSString *operation = [sender currentTitle];
     [self.brain performOperation:operation];
+    double result = [CalculatorBrain runProgram:self.brain.program usingVariableValues:self.testVariableValues];
+    self.display.text = [NSString stringWithFormat:@"%g", result];
+    [self updateDisplays];
+}
+
+- (IBAction)testPressed:(UIButton *)sender
+{
+    if (self.userIsInTheMiddleOfEnteringANumber) {
+        [self enterPressed];
+    }
+    NSString *testName = [sender currentTitle];
+    if ([@"Test 1" isEqualToString:testName]) {
+        self.testVariableValues = nil;
+    } else if ([@"Test 2" isEqualToString:testName]) {
+        self.testVariableValues = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:5], @"x",[NSNumber numberWithFloat:24.5], @"y", nil];
+    } else if ([@"Test 3" isEqualToString:testName]) {
+        self.testVariableValues = [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithInt:arc4random_uniform(100)], @"x", [NSNumber numberWithInt:arc4random_uniform(100)], @"y", [NSNumber numberWithInt:arc4random_uniform(100)], @"z", nil];
+    }
     double result = [CalculatorBrain runProgram:self.brain.program usingVariableValues:self.testVariableValues];
     self.display.text = [NSString stringWithFormat:@"%g", result];
     [self updateDisplays];
